@@ -1,9 +1,9 @@
 
-package com.example;
+package com.g6.guesstheword.dto;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,6 +25,11 @@ public class Message {
     private String content;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+
+    public Message(String system, String s) {
+        role=system;
+        content=s;
+    }
 
     @JsonProperty("role")
     public String getRole() {

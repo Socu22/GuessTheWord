@@ -1,6 +1,6 @@
-package org.example.chatgpte24a.restController;
+package com.g6.guesstheword.RestController;
 
-import org.example.chatgpte24a.dto.*;
+import com.g6.guesstheword.dto.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
