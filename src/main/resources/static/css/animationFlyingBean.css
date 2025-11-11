@@ -1,0 +1,8 @@
+
+img {
+    position: absolute;
+    width: 50px; /* your 5x5 image */
+    height: 50px;
+    border-radius: 10px;
+    transition: transform 3s ease-in-out;
+}
