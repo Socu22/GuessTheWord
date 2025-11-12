@@ -2,6 +2,22 @@ body {
     margin: 0;
     overflow: hidden;
     height: 100vh;
-    background: burlywood;
+    background: linear-gradient(to right, burlywood, #cf9731); }
+.Emoji {
+    font-size: 65pt;
 }
+.inpGuess{
+    color: black;
+    background-color: #d39a50;
+    border-color: transparent;
+    border-radius: 5%;
+}
+.Tiplabel{
+    background-color: #d39a50;
+    border-color: transparent;
+    border-radius: 5%;
+
+
+}
+
 

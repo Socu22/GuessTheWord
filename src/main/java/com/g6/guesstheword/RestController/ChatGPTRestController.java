@@ -61,7 +61,7 @@ public class ChatGPTRestController {
         session.setAttribute("wordToGuess", word);
         // System.out.println(session.getAttribute("usedWords"));
         Map<String, Object> map = new HashMap<>();
-        //map.put("word", word);
+        map.put("word", word);
         map.put("emojis", emojis);
         return map;
     }
