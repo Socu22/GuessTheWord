@@ -1,19 +1,28 @@
-import {fetchAnyUrl, postObjectAsJson} from "./moduleJSON.js"
+console.log("JSBackend loaded!");
 
 let category = "league of legends characters";
-let emojis;
+let emojis = []; // Initialize as an array
 let word;
 
-async function fetchWord(){
-    if(!category.length === 0){
-        const object = await fetchAnyUrl(window.location.origin + "/chooseWord?category=" + category);
-        for (const emoji of object.emojis){
-            emojis.add(emoji)
-            console.log(emoji);
+async function fetchWord() {
+    if (category.length > 0) {
+        try {
+            const response = await fetch(window.location.origin + "/chooseWord?category=" + encodeURIComponent(category));
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const object = await response.json();
+            emojis = object.emojis; // Assign the emojis array
+            word = object.word;
+            console.log("Emojis:", emojis);
+            console.log("Word:", word);
+        } catch (error) {
+            console.error("Error fetching word:", error);
         }
-        word = object.word;
-        console.log(word);
+    } else {
+        console.warn("Category is empty!");
     }
 }
 
-fetchWord().then(r => {})
+// Call the function
+fetchWord();

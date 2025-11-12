@@ -1,5 +1,7 @@
+console.log("FlyingCoffe loaded!")
 
-    for (let i = 0; i < 100; i++) {
+
+for (let i = 0; i < 3; i++) {
     const bean = document.createElement("img");
     bean.className = "BEAN";
     bean.src = "https://static.vecteezy.com/system/resources/previews/060/047/811/non_2x/exquisite-artistic-a-single-coffee-bean-roasted-and-detailed-no-background-with-transparent-background-top-tier-free-png.png";
