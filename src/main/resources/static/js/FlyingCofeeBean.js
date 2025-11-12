@@ -1,22 +1,41 @@
 console.log("FlyingCoffe loaded!")
 
 
-for (let i = 0; i < 3; i++) {
-    const bean = document.createElement("img");
-    bean.className = "BEAN";
-    bean.src = "https://static.vecteezy.com/system/resources/previews/060/047/811/non_2x/exquisite-artistic-a-single-coffee-bean-roasted-and-detailed-no-background-with-transparent-background-top-tier-free-png.png";
-    bean.alt = "Flying Bean";
-    bean.width = 10;
-    bean.height = 10;
+function placeBeans(imageLinks){
+    for (const image of imageLinks) {
+        const bean = document.createElement("img");
+        bean.className = "BEAN";
+        bean.src = image;
+        bean.alt = "https://static.vecteezy.com/system/resources/previews/060/047/811/non_2x/exquisite-artistic-a-single-coffee-bean-roasted-and-detailed-no-background-with-transparent-background-top-tier-free-png.png";
+        bean.width = 10;
+        bean.height = 10;
+        bean.style.left = 0;
+        bean.style.top = 0;
 
-    // random starting position
-    bean.style.position = "absolute";
+        // random starting position
+        bean.style.position = "absolute";
 
-    document.body.appendChild(bean);
-}
+        document.body.appendChild(bean);
+    }
 
     //get all BEAN classname
     const images = document.getElementsByClassName('BEAN');
+
+    for (const img of images) {
+
+        // Start immediately
+        moveImage(img);
+
+        // Move each image at a slightly different random interval (2.5–4s)
+        setInterval(() => moveImage(img), 2500 + Math.random() * 1500);
+
+    }
+
+}
+
+
+
+
 
     const moveImage = (img) => {
 
@@ -47,12 +66,4 @@ for (let i = 0; i < 3; i++) {
 
 };
 
-    for (const img of images) {
-
-    // Start immediately
-    moveImage(img);
-
-    // Move each image at a slightly different random interval (2.5–4s)
-    setInterval(() => moveImage(img), 2500 + Math.random() * 1500);
-
-}
+export {placeBeans};

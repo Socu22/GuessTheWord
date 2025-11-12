@@ -1,28 +1,61 @@
+import {fetchAnyUrl} from "./moduleJSON.js";
+
 console.log("JSBackend loaded!");
 
-let category = "league of legends characters";
+//let category = "league of legends characters";
 let emojis = []; // Initialize as an array
 let word;
 
-async function fetchWord() {
+
+async function fetchWord(category) {
     if (category.length > 0) {
-        try {
-            const response = await fetch(window.location.origin + "/chooseWord?category=" + encodeURIComponent(category));
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const object = await response.json();
-            emojis = object.emojis; // Assign the emojis array
-            word = object.word;
-            console.log("Emojis:", emojis);
-            console.log("Word:", word);
-        } catch (error) {
-            console.error("Error fetching word:", error);
-        }
+        const object = await fetchAnyUrl(window.location.origin + "/chooseWord?category=" + encodeURIComponent(category))
+        console.log(window.location.origin + "/chooseWord?category=" + encodeURIComponent(category));
+        emojis = object.emojis; // Assign the emojis array
+        word = object.word;
+        console.log("Emojis 2:", emojis);
+        console.log("Word 2:", word);
+
+        const images = await getImages(category);
+
+        object.images = images.images;
+
+        return object;
     } else {
         console.warn("Category is empty!");
     }
+    return null
+}
+async function guessWord(guessedWord) {
+    if (guessedWord.length > 0) {
+        const object = await fetchAnyUrl(window.location.origin + "/guessWord?guessedWord=" + encodeURIComponent(guessedWord))
+        //console.log(window.location.origin + "/chooseWord?category=" + encodeURIComponent(guessedWord));
+        //isItCorrect = object.isItCorrect; // Assign the emojis array
+       // word = object.word;
+        console.log("isItCorrect:", object.isItCorrect);
+        console.log("content:", object.text);
+        return object;
+    } else {
+        console.warn("Category is empty!");
+    }
+    return null
+}
+async function getImages(category) {
+    if (category.length > 0) {
+        const object = await fetchAnyUrl(window.location.origin + "/getImage?search=" + encodeURIComponent(category))
+        //console.log(window.location.origin + "/chooseWord?category=" + encodeURIComponent(guessedWord));
+        //isItCorrect = object.isItCorrect; // Assign the emojis array
+        // word = object.word;
+        for (const image of object.images){
+            console.log(image)
+        }
+        return object;
+    } else {
+        console.warn("Category is empty!");
+    }
+    return null
 }
 
 // Call the function
-fetchWord();
+///fetchWord();
+export {fetchWord, guessWord};

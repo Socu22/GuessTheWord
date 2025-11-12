@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -47,7 +50,7 @@ public class ChatGPTRestController {
 
         String[] splitMessage = message.getContent().split("/");
         String word = splitMessage[0];
-        if (splitMessage.length != 2 || word.contains(" ") || word.toLowerCase().contains("wordchosen") || splitMessage[1].split("-").length != 5) {
+        if (splitMessage.length != 2  || word.toLowerCase().contains("wordchosen") || splitMessage[1].split("-").length != 5) {
             System.out.println("recursion in motion " + message.getContent());
             return chooseWord(session, Category);
         }
@@ -67,7 +70,7 @@ public class ChatGPTRestController {
     }
 
     @GetMapping("/guessWord")
-    public String guessWord(HttpSession session, @RequestParam String guessedWord) {
+    public Map<String, Object> guessWord(HttpSession session, @RequestParam String guessedWord) {
         int hintNumber = (int) session.getAttribute("hintNumber");
         if (hintNumber < 1)
             hintNumber = 1;
@@ -95,7 +98,20 @@ public class ChatGPTRestController {
         for (Message message1 : messages) {
             System.out.println(message1.getContent());
         }
-        return message.getContent();
+        String[] messageSplit = message.getContent().split("-");
+
+        Map map = new HashMap();
+        if(messageSplit[0].toLowerCase().contains("yes"))
+            map.put("isItCorrect", true);
+        else if(messageSplit[0].toLowerCase().contains("no"))
+            map.put("isItCorrect", false);
+        else {
+            System.out.println("recursion: " + message.getContent());
+            return guessWord(session, guessedWord);
+        }
+        map.put("text", messageSplit[1]);
+
+        return map;
     }
 
     @GetMapping("/getImage")
@@ -146,7 +162,7 @@ public class ChatGPTRestController {
             String url = "https://www.googleapis.com/customsearch/v1"
                     + "?key=" + apiKey
                     + "&cx=" + cx
-                    + "&q=" + URLEncoder.encode(query + " transparent background png", StandardCharsets.UTF_8)
+                    + "&q=" + URLEncoder.encode(query + " transparent background", StandardCharsets.UTF_8)
                     + "&searchType=image"
                     + "&fileType=png"
                     + "&num=10"; // ✅ up to 10
@@ -163,7 +179,11 @@ public class ChatGPTRestController {
             List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
             if (items != null && !items.isEmpty()) {
                 for (Map<String, Object> item : items) {
-                    imageUrls.add((String) item.get("link"));
+                    BufferedImage image = ImageIO.read(new URL((String) item.get("link")));
+                    if (image.getColorModel().hasAlpha()) {
+                        imageUrls.add((String) item.get("link"));
+                   }
+
                 }
             } else {
                 System.err.println("No images found for query: " + query);
