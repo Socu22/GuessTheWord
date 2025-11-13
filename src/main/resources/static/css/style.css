@@ -25,7 +25,7 @@ body {
 .Tiplabel{
     background-color: #d39a50;
     border-color: transparent;
-    border-radius: 5%;
+    border-radius: 10px;
     font-size: 2vw;
     color: #543a06;
 
@@ -41,5 +41,9 @@ body {
 }
 .guessButton:hover{
     background-color: #bd8a48;
+}
+.youreRight{
+    font-size: 8vw;
+    float: inherit;
 }
 

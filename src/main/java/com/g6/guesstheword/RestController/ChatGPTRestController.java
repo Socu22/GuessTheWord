@@ -47,7 +47,7 @@ public class ChatGPTRestController {
                 "there has to be a dash between every emoji . try choosing less popular words. it must not be one of the following:" + session.getAttribute("usedWords")));
 
 
-        Message message = chatWithGPT(messages);
+        Message message = chatWithGPT(messages, 30);
 
 
         String[] splitMessage = message.getContent().split("/");
@@ -74,35 +74,41 @@ public class ChatGPTRestController {
     @GetMapping("/guessWord")
     public Map<String, Object> guessWord(HttpSession session, @RequestParam String guessedWord) {
         int hintNumber = (int) session.getAttribute("hintNumber");
-        if (hintNumber < 1)
-            hintNumber = 1;
-        if (hintNumber > 3)
-            hintNumber = 3;
+
 
 
         List<Message> messages = (List<Message>) session.getAttribute("messages");
 
-        //  if(hintNumber == 1) {
-        messages.add(new Message("user", "As someone who doesnt know the word, i want to guess the word. I am guessing " + guessedWord + ". " +
-                "First, respond with \"Yes-\" if the guessed word exactly matches the chosen word, otherwise respond \"No-\".\n" +
-                "Second, give the hint for this round only, in the format: \"Hint <number>: <hint text>\". Only provide one hint per round. " +
-                "There is 3 hints total, this is hint number " + hintNumber + ". The chosen word is " + session.getAttribute("wordToGuess") + "."));
-       /* }
+        String firstStep = "As someone who doesnt know the word, i want to guess the word. I am guessing " + guessedWord + ". " +
+        "First, respond with \"Yes-\" if the guessed word exactly matches the chosen word, otherwise respond \"No-\".\n";
+        String secondStepHints = "Second, give the hint for this round only, in the format: \"Hint <number>: <hint text> -\". Only provide one hint per round. " +
+                "There is 3 hints total, this is hint number " + hintNumber;
+        String secondStepNoHints = "Second, respond \"-\"";
+        String thirdStep =  ". Third, give some text to why you think their guess is good or bad, dependent on the emojis or the previous hints. dont reveal the actual chosen word" +
+                ". The chosen word is " + session.getAttribute("wordToGuess") + ".";
+        if(hintNumber < 4) {
+            messages.add(new Message("user", firstStep + secondStepHints + thirdStep));
+        }
         else {
-            messages.add(new Message("user", "i am now guessing " + guessedWord + ". Again Yes or No, and hint number " + hintNumber + "."));
-        }*/
+            messages.add(new Message("user", firstStep + secondStepNoHints + thirdStep));
+        }
 
-        Message message = chatWithGPT(messages);
+        Message message = chatWithGPT(messages, 60);
 
-        messages.add(message);
-        session.setAttribute("messages", messages);
-        session.setAttribute("hintNumber", hintNumber + 1);
+
         for (Message message1 : messages) {
             System.out.println(message1.getContent());
         }
         String[] messageSplit = message.getContent().split("-");
 
         Map map = new HashMap();
+        if(messageSplit.length != 3){
+            System.out.println("recursion: " + message.getContent());
+            return guessWord(session, guessedWord);
+        }
+        messages.add(message);
+        session.setAttribute("messages", messages);
+        session.setAttribute("hintNumber", hintNumber + 1);
         if(messageSplit[0].toLowerCase().contains("yes"))
             map.put("isItCorrect", true);
         else if(messageSplit[0].toLowerCase().contains("no"))
@@ -112,6 +118,7 @@ public class ChatGPTRestController {
             return guessWord(session, guessedWord);
         }
         map.put("text", messageSplit[1]);
+        map.put("upliftingText", messageSplit[2]);
 
         return map;
     }
@@ -124,10 +131,10 @@ public class ChatGPTRestController {
     }
 
 
-    public Message chatWithGPT(List<Message> messages) {
+    public Message chatWithGPT(List<Message> messages, int maxWords) {
         ChatRequestDTO chatRequest = new ChatRequestDTO();
         //ChatRequest objekt har jeg dannet med https://www.jsonschema2pojo.or g/ værktøj
-        chatRequest.setModel("gpt-3.5-turbo"); //vælg rigtig model. se powerpoint
+        chatRequest.setModel("gpt-4o-mini"); //vælg rigtig model. se powerpoint
         /*List<Message> lstMessages = new ArrayList<>(); //en liste af messages med roller
 
         lstMessages.add(new Message("system", "You are a helpful assistant."));
@@ -135,7 +142,7 @@ public class ChatGPTRestController {
         chatRequest.setMessages(messages);
         chatRequest.setN(1); //n er antal svar fra chatgpt
         chatRequest.setTemperature(1); //jo højere jo mere fantasifuldt svar (se powerpoint)
-        chatRequest.setMaxTokens(30); //længde af svar
+        chatRequest.setMaxTokens(maxWords); //længde af svar
         chatRequest.setStream(false); //
         //Stream stream = true, //er for viderekomne, der kommer flere svar asynkront
         chatRequest.setPresencePenalty(1); //noget med ikke at gentage sig. se powerpoint
@@ -159,7 +166,7 @@ public class ChatGPTRestController {
     public List<String> getImagesFromGoogle(String query) {
         System.out.println("started gettting images");
 
-        String apiKey = "AIzaSyBnglkrzNkSMBITzcRRe9RBpGaNrlrQd2Q"; // from Google Cloud Console
+        String apiKey = "AIzaSyAcAKhcRXE5DHGtiF-hkre2e5zn3Pfx4R4"; // from Google Cloud Console
         String cx = "90540985cc05b42ea"; // from https://cse.google.com/cse/all
 
         try {

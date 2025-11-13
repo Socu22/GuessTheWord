@@ -34,6 +34,7 @@ async function guessWord(guessedWord) {
        // word = object.word;
         console.log("isItCorrect:", object.isItCorrect);
         console.log("content:", object.text);
+        console.log("upliftingText:", object.upliftingText);
         return object;
     } else {
         console.warn("Category is empty!");

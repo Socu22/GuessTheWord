@@ -32,12 +32,12 @@ async function createEmojis(){
     div.style.display = "flex";
     div.style.alignContent = "center";
     div.style.justifyContent = "center";
-    div.style.paddingTop= "10%"
+    //div.style.paddingTop= "10%"
 
     div.appendChild(emojis);
 
     tipCorrectText = document.createElement("label")
-    tipCorrectText.className = "Tiplabel";
+    tipCorrectText.className = "youreRight";
     tiplabel = document.createElement("label");
     tiplabel.className = "Tiplabel";
     tiplabel.innerHTML = "";
@@ -80,6 +80,7 @@ async function createEmojis(){
     div5.style.display = "flex";
     div5.style.alignContent = "center";
     div5.style.justifyContent = "center";
+    div5.style.height = "20%";
 
     div5.appendChild(tipCorrectText);
     div3.appendChild(tiplabel);
@@ -99,11 +100,11 @@ async function guess(){
     console.log(inpGuess.value)
     const object = await guessWord(inpGuess.value)
     if (object.isItCorrect){
-        tipCorrectText.innerHTML = "That is Correct. "
+        tipCorrectText.innerHTML = "That is Correct"
         tipCorrectText.style.color = "green"
     }
     else{
-        tipCorrectText.innerHTML = "That is wrong. -"
+        tipCorrectText.innerHTML = "That is Wrong"
         tipCorrectText.style.color = "red"
         tiplabel.innerHTML +=  object.text + "<br>";
     }
