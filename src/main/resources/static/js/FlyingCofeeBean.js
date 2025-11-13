@@ -1,22 +1,58 @@
 console.log("FlyingCoffe loaded!")
 
 
-for (let i = 0; i < 3; i++) {
-    const bean = document.createElement("img");
-    bean.className = "BEAN";
-    bean.src = "https://static.vecteezy.com/system/resources/previews/060/047/811/non_2x/exquisite-artistic-a-single-coffee-bean-roasted-and-detailed-no-background-with-transparent-background-top-tier-free-png.png";
-    bean.alt = "Flying Bean";
-    bean.width = 10;
-    bean.height = 10;
+function placeBeans(imageLinks){
+    let currentImage = 0;
+    for (let i = 0; i < 10; i++) {
+        const bean = document.createElement("img");
+        bean.className = "BEAN";
+        if(imageLinks != null){
+            bean.src = imageLinks[currentImage]
+            currentImage++;
+            if(currentImage === imageLinks.length)
+                currentImage = 0;
+            bean.onerror = function() {
+               // imageLinks.splice(currentImage, 1);
+                bean.src = "https://static.vecteezy.com/system/resources/thumbnails/049/233/931/small_2x/cool-dude-emoji-a-stylish-emoji-with-sunglasses-exuding-a-laid-back-and-confident-vibe-free-png.png"
+               //delete imageLinks[currentImage]
 
-    // random starting position
-    bean.style.position = "absolute";
+            };
+        }
+        else{
+            bean.src = "https://static.vecteezy.com/system/resources/previews/060/047/811/non_2x/exquisite-artistic-a-single-coffee-bean-roasted-and-detailed-no-background-with-transparent-background-top-tier-free-png.png"
+        }
 
-    document.body.appendChild(bean);
-}
+        //bean.alt = "https://static.vecteezy.com/system/resources/previews/060/047/811/non_2x/exquisite-artistic-a-single-coffee-bean-roasted-and-detailed-no-background-with-transparent-background-top-tier-free-png.png";
+
+        bean.style.width = "6%";
+        bean.style.height = "auto"
+        bean.style.left = "0px";
+        bean.style.top = "0px";
+
+        // random starting position
+        bean.style.position = "absolute";
+
+        document.body.appendChild(bean);
+    }
 
     //get all BEAN classname
     const images = document.getElementsByClassName('BEAN');
+
+    for (const img of images) {
+
+        // Start immediately
+        moveImage(img);
+
+        // Move each image at a slightly different random interval (2.5–4s)
+        setInterval(() => moveImage(img), 2500 + Math.random() * 1500);
+
+    }
+
+}
+
+
+
+
 
     const moveImage = (img) => {
 
@@ -27,7 +63,9 @@ for (let i = 0; i < 3; i++) {
 
     // Generate random X and Y within the screen
     const randomX = Math.random() * maxX;
-    const randomY = Math.random() * maxY;
+    const upOrDown = Math.random();
+    if(upOrDown)
+        const randomY = Math.random() * maxY;
 
 
     const rect = img.getBoundingClientRect();
@@ -47,12 +85,4 @@ for (let i = 0; i < 3; i++) {
 
 };
 
-    for (const img of images) {
-
-    // Start immediately
-    moveImage(img);
-
-    // Move each image at a slightly different random interval (2.5–4s)
-    setInterval(() => moveImage(img), 2500 + Math.random() * 1500);
-
-}
+export {placeBeans};

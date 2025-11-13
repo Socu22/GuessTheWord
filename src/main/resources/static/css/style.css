@@ -4,20 +4,42 @@ body {
     height: 100vh;
     background: linear-gradient(to right, burlywood, #cf9731); }
 .Emoji {
-    font-size: 65pt;
+    font-size: 8vw;
 }
 .inpGuess{
-    color: black;
     background-color: #d39a50;
     border-color: transparent;
-    border-radius: 5%;
+    width: 20%;
+    height: 2%;
+    font-size: 2vw;
+    border-radius: 10px;
+    color: #543a06;
+    outline: none;
+}
+.inpGuess::placeholder{
+    color: #8a5d04;
+}
+.inpGuess:hover{
+    border-color: transparent;
 }
 .Tiplabel{
     background-color: #d39a50;
     border-color: transparent;
     border-radius: 5%;
-
+    font-size: 2vw;
+    color: #543a06;
 
 }
-
+.guessButton{
+    border-radius: 10px;
+    background-color: #d39a50;
+    width: 12%;
+    height: 3%;
+    font-size: 2vw;
+    border-color: transparent;
+    color: #543a06;
+}
+.guessButton:hover{
+    background-color: #bd8a48;
+}
 
