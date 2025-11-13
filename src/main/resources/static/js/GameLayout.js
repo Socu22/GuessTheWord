@@ -60,12 +60,14 @@ async function createEmojis(){
     inpGuess.style.paddingBottom = "1%";
 
     guessButton = document.createElement("button")
+    guessButton.className = "guessButton"
     guessButton.innerHTML = "Guess"
 
     const div4 = document.createElement("div");
     div4.style.display = "flex";
     div4.style.alignContent = "center";
     div4.style.justifyContent = "center";
+    div4.style.paddingTop = "1%";
     div4.appendChild(guessButton)
 
 

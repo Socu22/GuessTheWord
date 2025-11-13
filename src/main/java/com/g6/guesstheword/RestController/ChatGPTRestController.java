@@ -13,6 +13,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -155,7 +157,9 @@ public class ChatGPTRestController {
         return null;
     }
     public List<String> getImagesFromGoogle(String query) {
-        String apiKey = "AIzaSyAcAKhcRXE5DHGtiF-hkre2e5zn3Pfx4R4"; // from Google Cloud Console
+        System.out.println("started gettting images");
+
+        String apiKey = "AIzaSyBnglkrzNkSMBITzcRRe9RBpGaNrlrQd2Q"; // from Google Cloud Console
         String cx = "90540985cc05b42ea"; // from https://cse.google.com/cse/all
 
         try {
@@ -165,6 +169,7 @@ public class ChatGPTRestController {
                     + "&q=" + URLEncoder.encode(query + " transparent background", StandardCharsets.UTF_8)
                     + "&searchType=image"
                     + "&fileType=png"
+                    + "&safe=active"
                     + "&num=10"; // ✅ up to 10
 
             WebClient webClient = WebClient.create();
@@ -178,109 +183,72 @@ public class ChatGPTRestController {
 
             List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
             if (items != null && !items.isEmpty()) {
+                int numberOfImages = 2;
                 for (Map<String, Object> item : items) {
-                    BufferedImage image = ImageIO.read(new URL((String) item.get("link")));
-                    if (image.getColorModel().hasAlpha()) {
-                        imageUrls.add((String) item.get("link"));
-                   }
+                    if(!isNotBadSite((String)item.get("link"))) {
+                        try {
+                            BufferedImage image = ImageIO.read(new URL((String) item.get("link")));
+                            if (image != null && image.getColorModel().hasAlpha() && isActuallyTransparent(image)) {
+                                System.out.println("added image: " + item.get("link"));
+                                imageUrls.add((String) item.get("link"));
+                                numberOfImages--;
+                                if(numberOfImages == 0){
+                                    System.out.println("done getting images");
+                                    return imageUrls;
+                                }
 
+                            }
+                            else {
+                                System.out.println("not transparent" + item.get("link"));
+                            }
+                        } catch (IOException e) {
+                            System.err.println("⚠️ Failed to read image: " + item.get("link") + " - " + e.getMessage());
+                        }
+                    }
+                    else
+                        System.out.println("bad site: " + item.get("link"));
                 }
+
             } else {
                 System.err.println("No images found for query: " + query);
+                return imageUrls;
             }
-
+            System.out.println("didnt get all images");
             return imageUrls;
-        } catch (WebClientResponseException e) {
-            System.err.println("❌ API Error: " + e.getRawStatusCode() + " - " + e.getResponseBodyAsString());
-            return List.of();
-        } catch (Exception e) {
+        }
+        catch(Exception e){
             e.printStackTrace();
             return List.of();
         }
+
+
+
     }
 
-    /* public String generateImage(String prompt) {
+    boolean isActuallyTransparent(BufferedImage image) {
+        if (image == null || !image.getColorModel().hasAlpha()) return false;
 
-         // Build the request body
-         Map<String, Object> requestBody = new HashMap<>();
-         requestBody.put("model", "gpt-image-1"); // the mini version
-         requestBody.put("prompt", prompt);
-         requestBody.put("size", "1024x1024"); // optional, can also use "512x512" or "256x256" for cheaper images
-         requestBody.put("n", 1); // number of images to generate
-         requestBody.put("quality", "low"); // optional: "low", "standard", "high"
+        int width = image.getWidth();
+        int height = image.getHeight();
 
-         // Send the HTTP POST
-         WebClient webClient = WebClient.builder()
-                 .baseUrl("https://api.openai.com/v1/images/generations")
-                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + openapikey)
-                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                 .build();
-
-         // Response mapping class (inner DTO)
-         class ImageData {
-             public String url;
-             public String b64_json; // if you request base64 output instead
-         }
-         class ImageResponse {
-             public List<ImageData> data;
-         }
-
-
-         ImageResponse response = webClient.post()
-                 .bodyValue(requestBody)
-                 .retrieve()
-                 .bodyToMono(ImageResponse.class)
-                 .block();
-
-         if (response != null && !response.data.isEmpty()) {
-             System.out.println( "response data: " + response.data);
-             return response.data.get(0).url; // returns the image URL
-         }
-
-         return null;
-     }
-
- }*/
-    public String generateImageFlagship(String prompt) {
-        WebClient webClient = WebClient.builder()
-                .baseUrl("https://api.openai.com/v1/images/generations")
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + openapikey)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", "gpt-image-1-mini"); // flagship model
-        requestBody.put("prompt", prompt);
-        requestBody.put("size", "1024x1024");
-        requestBody.put("n", 1);
-        // No 'quality' field — not yet public
-
-
-
-        try {
-            String response = webClient.post()
-                    .bodyValue(requestBody)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-            System.out.println(response);
-            /*if (response != null && response.data != null && !response.data.isEmpty()) {
-                System.out.println("url: " + response.data.get(0).b64_json);
-                System.out.println("url: " + response.data.get(0).url);
-                return response.data.get(0).url;
-            }*/
-        } catch (WebClientResponseException e) {
-            System.err.println("Error: " + e.getRawStatusCode() + " - " + e.getResponseBodyAsString());
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = image.getRGB(x, y);
+                int alpha = (pixel >> 24) & 0xff;
+                if (alpha < 255) {
+                    return true; // found a transparent pixel
+                }
+            }
         }
-
-        return null;
+        return false; // no transparency found
     }
-    public static class ImageResponse {
-        public List<ImageData> data;
-    }
-
-    public static class ImageData {
-        public String url;
-        public String b64_json;
+    boolean isNotBadSite(String site) {
+        String[]  urls = {"pngimg.com", "stickpng.com"};
+        for (String url : urls) {
+            if(site.toLowerCase().contains(url)){
+                return true;
+            }
+        }
+        return false;
     }
 }

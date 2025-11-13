@@ -46,9 +46,12 @@ async function getImages(category) {
         //console.log(window.location.origin + "/chooseWord?category=" + encodeURIComponent(guessedWord));
         //isItCorrect = object.isItCorrect; // Assign the emojis array
         // word = object.word;
-        for (const image of object.images){
-            console.log(image)
+        if(object.images != null){
+            for (const image of object.images){
+                console.log(image)
+            }
         }
+
         return object;
     } else {
         console.warn("Category is empty!");
