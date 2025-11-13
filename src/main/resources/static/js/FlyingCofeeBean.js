@@ -62,10 +62,21 @@ function placeBeans(imageLinks){
     const maxY = window.innerHeight - img.clientHeight;
 
     // Generate random X and Y within the screen
-    const randomX = Math.random() * maxX;
-    const upOrDown = Math.random();
-    if(upOrDown)
-        const randomY = Math.random() * maxY;
+    //const randomX = Math.random() * maxX;
+
+    const upOrDown = Math.round( Math.random());
+    let randomY = Math.random() * (maxY/4);
+    if(upOrDown === 0){
+        randomY = maxY -randomY;
+    }
+
+
+    const upOrDownX = Math.round( Math.random());
+    let randomX = Math.random() * (maxX/5);
+    if(upOrDownX === 0) {
+        randomX = maxX -randomX;
+    }
+
 
 
     const rect = img.getBoundingClientRect();
@@ -84,5 +95,6 @@ function placeBeans(imageLinks){
 
 
 };
+
 
 export {placeBeans};
