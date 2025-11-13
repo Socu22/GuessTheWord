@@ -28,6 +28,7 @@ function placeBeans(imageLinks){
         bean.style.height = "auto"
         bean.style.left = "0px";
         bean.style.top = "0px";
+        bean.style.pointerEvents = "none";
 
         // random starting position
         bean.style.position = "absolute";
