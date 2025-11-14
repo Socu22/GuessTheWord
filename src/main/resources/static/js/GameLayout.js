@@ -31,10 +31,15 @@ function createSearchCategory(){
         let searchfield = document.createElement("input");
         let button = document.createElement("button");
         button.innerText = "Start";
-        searchfield.value = "pick a category"
+        button.className = "guessButton";
+        searchfield.placeholder = "pick a category";
+        searchfield.className = "inpGuess";
+        searchfield.style.height = "2.49888888vw";
         container.className = "columnContainer centeredContents"
         container.style.height = "70%"
-        title.innerText = "THE CATEGORY GAME"
+        container.style.gap = "0.567vw"
+        title.innerText = "GUESS THE WORD!"
+        title.style.fontFamily = "Cursive"
         title.className = "youreRight";
         document.body.append(container);
         container.appendChild(title);
@@ -75,7 +80,13 @@ console.log("category: " + category_)
 
     tipCorrectText = document.createElement("label")
     tipCorrectText.className = "youreRight";
+    tipCorrectText.style.fontSize = "6vw";
+    tipCorrectText.style.fontFamily= "Cursive"
     upliftingText = document.createElement("label")
+    upliftingText.style.color = "#543a06"
+    upliftingText.style.fontFamily= "Cursive"
+    upliftingText.style.fontSize="1.5678vw"
+    upliftingText.style.textAlign = "center";
     //tiplabel = document.createElement("label");
     //tiplabel.className = "Tiplabel";
 
@@ -122,7 +133,7 @@ console.log("category: " + category_)
 
     div6.style.alignContent = "center";
     div6.style.justifyContent = "center";
-    div6.style.height = "2vw";
+    div6.style.height = "3.567vw";
 
      givUpButton = document.createElement("button")
     document.body.appendChild(givUpButton)
@@ -141,7 +152,7 @@ console.log("category: " + category_)
     document.body.append(div5, div6, div, div3, div2, div4);
 
     guessButton.addEventListener("click", () => guess(object.word));
-    givUpButton.addEventListener("click", () => finished(object.word, "the word was: ", "black") )
+    givUpButton.addEventListener("click", () => finished(object.word, "Word: ", "black") )
 
     images = object.images
     placeBeans(object.images);
@@ -162,12 +173,12 @@ async function guess(word) {
     upliftingText.innerHTML = object.upliftingText
     if (object.isItCorrect) {
         tipCorrectText.innerHTML = "That is Correct";
-        tipCorrectText.style.color = "green";
+        tipCorrectText.style.color = "darkgreen";
         finished(word, "Correct, the word is: ", "green")
 
     } else {
         tipCorrectText.innerHTML = "That is wrong";
-        tipCorrectText.style.color = "red";
+        tipCorrectText.style.color = "darkred";
 
 
 
@@ -175,6 +186,7 @@ async function guess(word) {
             const tiplabel = document.createElement("label");
             tiplabel.className = "Tiplabel";
             tiplabel.innerHTML = object.text;
+            tiplabel.style.color = "#543a06";
             div3.appendChild(tiplabel);
         }
        /* if(x === 2) {
@@ -187,7 +199,8 @@ function makeReplayButtons(){
     if(!madeReplayButtons) {
         madeReplayButtons = true;
         repeatBtn = document.createElement("button");
-        repeatBtn.innerText = "Repeat";
+        repeatBtn.innerText = "Again";
+        repeatBtn.className = "guessButton";
         document.body.appendChild(repeatBtn);
         repeatBtn.addEventListener("click", () => {
             removeGameElements();
@@ -195,7 +208,9 @@ function makeReplayButtons(){
         });
 
         stopRepeatBtn = document.createElement("button");
-        stopRepeatBtn.innerText = "Stop-Repeat";
+        stopRepeatBtn.innerText = "New Category";
+        stopRepeatBtn.style.width = "20%";
+        stopRepeatBtn.className = "guessButton";
         document.body.appendChild(stopRepeatBtn);
         stopRepeatBtn.addEventListener("click", () => {
             removeGameElements();
@@ -204,6 +219,15 @@ function makeReplayButtons(){
 
         });
     }
+    const div7 = document.createElement("div");
+    div7.style.display = "flex";
+    div7.style.alignContent = "center";
+    div7.style.justifyContent = "center";
+    div7.style.columnGap = "1vw";
+    div7.appendChild(repeatBtn);
+    div7.appendChild(stopRepeatBtn);
+    document.body.appendChild(div7);
+
 }
 
 
