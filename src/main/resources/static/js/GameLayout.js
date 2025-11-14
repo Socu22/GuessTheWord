@@ -29,7 +29,7 @@ function createSearchCategory(){
         let searchfield = document.createElement("input");
         let button = document.createElement("button");
         button.innerText = "Start";
-        searchfield.innerHTML = "pick a category"
+        searchfield.value = "pick a category"
         container.className = "columnContainer centeredContents"
         container.style.height = "70%"
         title.innerText = "THE CATEGORY GAME"
