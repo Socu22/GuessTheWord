@@ -47,3 +47,13 @@ body {
     float: inherit;
 }
 
+.columnContainer{
+    display: flex;
+    flex-direction: column;
+}
+.centeredContents{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

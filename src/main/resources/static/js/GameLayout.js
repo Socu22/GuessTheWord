@@ -24,13 +24,20 @@ let canGuess = true;
 createSearchCategory();
 
 function createSearchCategory(){
-
+        let container = document.createElement("container");
+        let title = document.createElement("div")
         let searchfield = document.createElement("input");
         let button = document.createElement("button");
         button.innerText = "Start";
-
-        document.body.appendChild(searchfield);
-        document.body.appendChild(button);
+        searchfield.innerHTML = "pick a category"
+        container.className = "columnContainer centeredContents"
+        container.style.height = "70%"
+        title.innerText = "THE CATEGORY GAME"
+        title.className = "youreRight";
+        document.body.append(container);
+        container.appendChild(title);
+        container.appendChild(searchfield);
+        container.appendChild(button);
 
         button.addEventListener("click", () => createEmojis(searchfield.value));
 
