@@ -28,6 +28,8 @@ import java.util.stream.Stream;
 public class ChatGPTRestController {
     @Value("${openai.api.key}")
     private String openapikey;
+    @Value("${GOOGLEAPIKEY}")
+    private String googleapikey;
     private final WebClient webClient;
 
     public ChatGPTRestController(WebClient.Builder webClientBuilder) {
@@ -169,7 +171,7 @@ public class ChatGPTRestController {
     public List<String> getImagesFromGoogle(String query) {
         System.out.println("started gettting images");
 
-        String apiKey = "AIzaSyAcAKhcRXE5DHGtiF-hkre2e5zn3Pfx4R4"; // from Google Cloud Console
+        String apiKey = googleapikey ; // from Google Cloud Console
         String cx = "90540985cc05b42ea"; // from https://cse.google.com/cse/all
 
         try {
