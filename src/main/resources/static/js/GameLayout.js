@@ -7,7 +7,7 @@ let guessButton;
 let tipCorrectText;
 let upliftingText;
 let inpGuess;
-
+let givUpButton
 let repeatBtn;
 let stopRepeatBtn;
 let y = false;
@@ -17,6 +17,7 @@ let div, div2, div3, div4, div5, div6;
 
 let x =0
 let category;
+let images;
 let madeReplayButtons = false;
 let canGuess = true;
 
@@ -24,6 +25,7 @@ let canGuess = true;
 createSearchCategory();
 
 function createSearchCategory(){
+
         let container = document.createElement("container");
         let title = document.createElement("div")
         let searchfield = document.createElement("input");
@@ -39,16 +41,10 @@ function createSearchCategory(){
         container.appendChild(searchfield);
         container.appendChild(button);
 
-        button.addEventListener("click", () => createEmojis(searchfield.value));
+    button.addEventListener("click", () => createEmojis(searchfield.value));
 
 
 }
-/*if (sessionStorage.getItem("categorySession") != null) {
-    document.body.removeChild(searchfield);
-    document.body.removeChild(button);
-    createEmojis();
-}*/
-
 
 
 async function createEmojis(category_) {
@@ -58,27 +54,14 @@ console.log("category: " + category_)
         return
     }
     removeGameElements()
-    // Remove any previous content first
-    //removeGameElements();
 
-  /*  if (sessionStorage.getItem("categorySession") === null) {
-        category_ = searchfield.value;
-        console.log("the category: " + category_);
-        document.body.removeChild(searchfield);
-        document.body.removeChild(button);
-        sessionStorage.setItem("categorySession", category_);
-    } else {
-        category_ = sessionStorage.getItem("categorySession");
-        console.log("the category: " + category_);
-
-
-    }*/
-    //const category= category_;
     const emojis = document.createElement("label");
     emojis.className = "Emoji";
     emojis.innerHTML = "";
     category = category_
-    const object = await fetchWord(category_);
+    const loadbar = makeLoadBar();
+    const object = await fetchWord(category_, images);
+    document.body.removeChild(loadbar);
     for (const emoji of object.emojis) {
         emojis.innerHTML += emoji;
     }
@@ -112,6 +95,8 @@ console.log("category: " + category_)
     guessButton.className = "guessButton";
     guessButton.innerHTML = "Guess";
 
+
+
     div2 = document.createElement("div");
     div2.style.display = "flex";
     div2.style.justifyContent = "center";
@@ -139,40 +124,52 @@ console.log("category: " + category_)
     div6.style.justifyContent = "center";
     div6.style.height = "2vw";
 
+     givUpButton = document.createElement("button")
+    document.body.appendChild(givUpButton)
+    givUpButton.innerHTML = "Give Up"
+    givUpButton.className = "guessButton";
+    givUpButton.style.position = "fixed";
+    givUpButton.style.bottom = "10%";  // distance from bottom
+    givUpButton.style.right = "6%";   // distance from right
+
+
+
     div5.appendChild(tipCorrectText);
     div6.appendChild(upliftingText);
 
     // Append to body
     document.body.append(div5, div6, div, div3, div2, div4);
 
-    guessButton.addEventListener("click", () => guess());
+    guessButton.addEventListener("click", () => guess(object.word));
+    givUpButton.addEventListener("click", () => finished(object.word, "the word was: ", "black") )
 
-
+    images = object.images
     placeBeans(object.images);
 }
 
-async function guess() {
+async function guess(word) {
     if(!canGuess){
         return
     }
     canGuess = false;
 
     console.log(inpGuess.value);
+    const loadbar = makeLoadBar();
     const object = await guessWord(inpGuess.value);
+    document.body.removeChild(loadbar);
+
     canGuess = true
+    upliftingText.innerHTML = object.upliftingText
     if (object.isItCorrect) {
         tipCorrectText.innerHTML = "That is Correct";
         tipCorrectText.style.color = "green";
-        div2.removeChild(inpGuess)
-        div4.removeChild(guessButton)
-
-        makeReplayButtons()
+        finished(word, "Correct, the word is: ", "green")
 
     } else {
         tipCorrectText.innerHTML = "That is wrong";
         tipCorrectText.style.color = "red";
 
-        upliftingText.innerHTML = object.upliftingText
+
 
         if(x < 3){
             const tiplabel = document.createElement("label");
@@ -180,9 +177,9 @@ async function guess() {
             tiplabel.innerHTML = object.text;
             div3.appendChild(tiplabel);
         }
-        if(x === 2) {
+       /* if(x === 2) {
           makeReplayButtons()
-        }
+        }*/
         x++
     }
 }
@@ -203,40 +200,38 @@ function makeReplayButtons(){
         stopRepeatBtn.addEventListener("click", () => {
             removeGameElements();
             createSearchCategory()
-            //  sessionStorage.removeItem("categorySession");
-            // createEmojis();
-            // y=true
+            images = null;
 
         });
     }
 }
 
 
+function finished(word, text, color){
+    console.log("giving up")
+    div2.removeChild(inpGuess)
+    div4.removeChild(guessButton)
+    makeReplayButtons()
+    tipCorrectText.innerHTML = text + word;
+    tipCorrectText.style.color = color
+    document.body.removeChild(givUpButton)
+    div6.removeChild(upliftingText)
+}
 
-// 🧹 helper to delete previous divs safely
 function removeGameElements() {
-    /*const bodyChildren = document.body.childNodes;
-    for (let elm of bodyChildren){
-        if(elm != null)*/
+
     document.body.innerHTML = ""
     madeReplayButtons = false;
     x=0;
-  //  }
-  /*  for (const element of [div, div2, div3, div4, div5, repeatBtn, stopRepeatBtn]) {
-        if (element && document.body.contains(element)) {
-            document.body.removeChild(element);
-        }
-    }*/
-    //recreateStartUIIfNeeded()
+
 }
-/*function recreateStartUIIfNeeded() {
-    if (y) {
-        y = false; // reset right away so it doesn't trigger twice
-        searchfield = document.createElement("input");
-        button = document.createElement("button");
-        button.innerText = "Start";
-        document.body.appendChild(searchfield);
-        document.body.appendChild(button);
-        button.addEventListener("click", () => createEmojis());
-    }
-}*/
+
+function makeLoadBar(){
+    let loadBar = document.createElement("img")
+    loadBar.src = "https://64.media.tumblr.com/a597edc6fb9b248454087f039d9df122/0985fb8e338df70e-53/s1280x1920/c5204307a07c69bddb3a310bd500986aba12cf67.gif"
+    document.body.appendChild(loadBar)
+    loadBar.style.width = "12vw";
+    loadBar.style.height = "auto"
+    loadBar.className = "absoluteCentered"
+    return loadBar
+}

@@ -7,7 +7,7 @@ let emojis = []; // Initialize as an array
 let word;
 
 
-async function fetchWord(category) {
+async function fetchWord(category, images_) {
     if (category.length > 0) {
         const object = await fetchAnyUrl(window.location.origin + "/chooseWord?category=" + encodeURIComponent(category))
         console.log(window.location.origin + "/chooseWord?category=" + encodeURIComponent(category));
@@ -16,10 +16,14 @@ async function fetchWord(category) {
         console.log("Emojis 2:", emojis);
         console.log("Word 2:", word);
 
-        const images = await getImages(category);
-
-        object.images = images.images;
-
+        console.log("images: " + images_ + "length: " + (images_ === undefined))
+        if(images_ === undefined || images_ === null){
+            const images = await getImages(category);
+            object.images = images.images;
+        }
+        else {
+            object.images = images_;
+        }
         return object;
     } else {
         console.warn("Category is empty!");
