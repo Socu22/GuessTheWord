@@ -38,13 +38,14 @@ public class ChatGPTRestController {
     @GetMapping("/chooseWord")
     public Map<String, Object> chooseWord(HttpSession session, @RequestParam String category) {
         String Category = category;
-
+        System.out.println("trying to choose word");
 
         List<Message> messages = new ArrayList<>();
         messages.add(new Message("user", "make guess the word, using 5 emojis. Do not use unrelated emojis." +
                 "Only choose emojis that directly relate to the chosen word. the category is " + Category + ". " +
                 "the format is: wordchosen/emoji1-emoji2-emoji3-emoji4-emoji5. Follow the format, dont write anything else before or after, " +
-                "there has to be a dash between every emoji . try choosing less popular words. it must not be one of the following:" + session.getAttribute("usedWords")));
+                "there has to be a dash between every emoji . try choosing less popular words if you can. " +
+                "it must not be one of the following, unless there is no more words in the category:" + session.getAttribute("usedWords")));
 
 
         Message message = chatWithGPT(messages, 30);
@@ -84,7 +85,8 @@ public class ChatGPTRestController {
         String secondStepHints = "Second, give the hint for this round only, in the format: \"Hint <number>: <hint text> -\". Only provide one hint per round. " +
                 "There is 3 hints total, this is hint number " + hintNumber;
         String secondStepNoHints = "Second, respond \"-\"";
-        String thirdStep =  ". Third, give some text to why you think their guess is good or bad, dependent on the emojis or the previous hints. dont reveal the actual chosen word" +
+        String thirdStep =  ". Third, give some text to why you think their guess is good or bad, dependent on the emojis or the previous hints. " +
+                "dont reveal the actual chosen word, or anything about the chosen word, that isnt mentioned in the hints or emojis." +
                 ". The chosen word is " + session.getAttribute("wordToGuess") + ".";
         if(hintNumber < 4) {
             messages.add(new Message("user", firstStep + secondStepHints + thirdStep));
