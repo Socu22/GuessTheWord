@@ -53,7 +53,7 @@ public class ChatGPTRestController {
 
         String[] splitMessage = message.getContent().split("/");
         String word = splitMessage[0];
-        if (splitMessage.length != 2  || word.toLowerCase().contains("wordchosen") || splitMessage[1].split("-").length != 5) {
+        if (splitMessage.length != 2 || word.toLowerCase().contains("wordchosen") || splitMessage[1].split("-").length != 5) {
             System.out.println("recursion in motion " + message.getContent());
             return chooseWord(session, Category);
         }
@@ -75,7 +75,6 @@ public class ChatGPTRestController {
     @GetMapping("/guessWord")
     public Map<String, Object> guessWord(HttpSession session, @RequestParam String guessedWord) {
         int hintNumber = (int) session.getAttribute("hintNumber");
-
 
 
         List<Message> messages = (List<Message>) session.getAttribute("messages");
@@ -111,9 +110,9 @@ public class ChatGPTRestController {
         messages.add(message);
         session.setAttribute("messages", messages);
         session.setAttribute("hintNumber", hintNumber + 1);
-        if(messageSplit[0].toLowerCase().contains("yes"))
+        if (messageSplit[0].toLowerCase().contains("yes"))
             map.put("isItCorrect", true);
-        else if(messageSplit[0].toLowerCase().contains("no"))
+        else if (messageSplit[0].toLowerCase().contains("no"))
             map.put("isItCorrect", false);
         else {
             System.out.println("recursion: " + message.getContent());
@@ -165,6 +164,7 @@ public class ChatGPTRestController {
         }
         return null;
     }
+
     public List<String> getImagesFromGoogle(String query) {
         System.out.println("started gettting images");
 
@@ -194,27 +194,25 @@ public class ChatGPTRestController {
             if (items != null && !items.isEmpty()) {
                 int numberOfImages = 2;
                 for (Map<String, Object> item : items) {
-                    if(!isNotBadSite((String)item.get("link"))) {
+                    if (!isNotBadSite((String) item.get("link"))) {
                         try {
                             BufferedImage image = ImageIO.read(new URL((String) item.get("link")));
                             if (image != null && image.getColorModel().hasAlpha() && isActuallyTransparent(image)) {
                                 System.out.println("added image: " + item.get("link"));
                                 imageUrls.add((String) item.get("link"));
                                 numberOfImages--;
-                                if(numberOfImages == 0){
+                                if (numberOfImages == 0) {
                                     System.out.println("done getting images");
                                     return imageUrls;
                                 }
 
-                            }
-                            else {
+                            } else {
                                 System.out.println("not transparent" + item.get("link"));
                             }
                         } catch (IOException e) {
                             System.err.println("⚠️ Failed to read image: " + item.get("link") + " - " + e.getMessage());
                         }
-                    }
-                    else
+                    } else
                         System.out.println("bad site: " + item.get("link"));
                 }
 
@@ -224,12 +222,10 @@ public class ChatGPTRestController {
             }
             System.out.println("didnt get all images");
             return imageUrls;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
-
 
 
     }
@@ -251,10 +247,11 @@ public class ChatGPTRestController {
         }
         return false; // no transparency found
     }
+
     boolean isNotBadSite(String site) {
-        String[]  urls = {"pngimg.com", "stickpng.com"};
+        String[] urls = {"pngimg.com", "stickpng.com"};
         for (String url : urls) {
-            if(site.toLowerCase().contains(url)){
+            if (site.toLowerCase().contains(url)) {
                 return true;
             }
         }
