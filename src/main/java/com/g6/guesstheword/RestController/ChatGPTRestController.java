@@ -41,10 +41,11 @@ public class ChatGPTRestController {
         System.out.println("trying to choose word");
 
         List<Message> messages = new ArrayList<>();
-        messages.add(new Message("user", "make guess the word, using 5 emojis. Do not use unrelated emojis." +
+        messages.add(new Message("user", "let's play guess the word, using 5 emojis. Do not use unrelated emojis." +
                 "Only choose emojis that directly relate to the chosen word. the category is " + Category + ". " +
-                "the format is: wordchosen/emoji1-emoji2-emoji3-emoji4-emoji5. Follow the format, dont write anything else before or after, " +
+                "the response format is: wordchosen/emoji1-emoji2-emoji3-emoji4-emoji5. Follow the format, don't write anything else before or after, " +
                 "there has to be a dash between every emoji . try choosing less popular words if you can. " +
+                "when possible, prioritize the chosen word being specific objects or names over categories, unless otherwise specified" +
                 "it must not be one of the following, unless there is no more words in the category:" + session.getAttribute("usedWords")));
 
 
