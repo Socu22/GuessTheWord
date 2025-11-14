@@ -34,7 +34,7 @@ body {
     border-radius: 10px;
     background-color: #d39a50;
     width: 12%;
-    height: 3%;
+    height: 3vw;
     font-size: 2vw;
     border-color: transparent;
     color: #543a06;
@@ -56,4 +56,9 @@ body {
     justify-content: center;
     align-items: center;
 }
-
+.absoluteCentered {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
