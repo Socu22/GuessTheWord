@@ -146,7 +146,7 @@ console.log("category: " + category_)
 
     div6.style.alignContent = "center";
     div6.style.justifyContent = "center";
-    div6.style.height = "3.567vw";
+    div6.style.height = "4.55vw";
 
      givUpButton = document.createElement("button")
     document.body.appendChild(givUpButton)
