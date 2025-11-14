@@ -46,6 +46,19 @@ function createSearchCategory(){
         container.appendChild(searchfield);
         container.appendChild(button);
 
+
+        const exampleText = document.createElement("label")
+    exampleText.style.fontFamily = "Cursive"
+    exampleText.style.fontSize = "2vw"
+    exampleText.style.position = "absolute"
+    exampleText.style.bottom = "7vw"
+    exampleText.style.right = "6vw"
+    exampleText.innerHTML = "Example Categories: <br>- Pokemons<br>- League of legends Characters<br>- Marvel Characters<br>- Chess Pieces<br>- Countries<br>- 'book name' characters"
+    exampleText.style.color = "#543a06"
+    //exampleText.style.alignItems = "center"
+    exampleText.style.textAlign = "center"
+    exampleText.style.transform = "rotate(-20deg)";
+    document.body.appendChild(exampleText)
     button.addEventListener("click", () => createEmojis(searchfield.value));
 
 
